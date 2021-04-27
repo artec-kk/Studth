@@ -28,7 +28,7 @@ def controller(solution):
         for action in twists_key[twist]:
             for each_action in action:
                 send_command(each_action)
-            if action[0][2] >= 1000:
+            if action[0][1] >= 1000:
                 sleep(0.15)
             else:
                 sleep(0.3)
