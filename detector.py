@@ -58,7 +58,7 @@ def detector():
             tmp = [[] for _ in range(3)]
             for dr in range(9):
                 for i in range(3):
-                    tmp[i].append(hsv[y + dy[dr]][x + dy[dr]][i])
+                    tmp[i].append(hsv[y + dy[dr]][x + dx[dr]][i])
                     if i == 0 and tmp[i][-1] > 150:
                         tmp[i][-1] -= 180
             for i in range(3):
@@ -91,7 +91,7 @@ def detector():
             tmp = [[] for _ in range(3)]
             for dr in range(9):
                 for i in range(3):
-                    tmp[i].append(hsv[y + dy[dr]][x + dy[dr]][i])
+                    tmp[i].append(hsv[y + dy[dr]][x + dx[dr]][i])
                     if i == 0 and tmp[i][-1] > 150:
                         tmp[i][-1] -= 180
             for i in range(3):
