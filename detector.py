@@ -23,6 +23,18 @@ def detector():
         grab(i)
     sleep(1)
     capture = cv2.VideoCapture(0)
+    while True:
+        ret, frame = capture.read()
+        if ret:
+            frame = cv2.resize(frame, (size_x, size_y))
+            for dr in range(9):
+                cv2.circle(frame, (center[0] + dx[dr] * d, center[1] + dy[dr] * d), 2, (0, 0, 0), 2)
+            cv2.imshow('frame', frame)
+            # if cv2.waitKey(1):
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
+
     #color: wgrboy
     #color_low = [[-1 for _ in range(3)] for _ in range(6)]
     #color_hgh = [[-1 for _ in range(3)] for _ in range(6)]
@@ -68,12 +80,12 @@ def detector():
                 if i == 0 and vals[val_idx][i] < 0:
                     vals[val_idx][i] += 180
         
-        if idx == 0:
-            for dr in range(9):
-                cv2.circle(frame, (center[0] + dx[dr] * d, center[1] + dy[dr] * d), 2, (0, 0, 0), 2)
-            cv2.imshow('frame', frame)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+        # if idx == 0:
+        for dr in range(9):
+            cv2.circle(frame, (center[0] + dx[dr] * d, center[1] + dy[dr] * d), 2, (0, 0, 0), 2)
+        cv2.imshow('frame', frame)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         
         grab_half(0)
         sleep(0.25)
