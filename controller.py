@@ -4,21 +4,20 @@ import serial
 from time import time, sleep
 
 def grab(num):
-    s = str(num % 2) + ' ' + '1000'
-    ser_motor[num // 2].write((s + '\n').encode())
+    s = str(num) + ' ' + '1000'
+    ser_motor.write((s + '\n').encode())
 
 def release(num):
-    s = str(num % 2) + ' ' + '2000'
-    ser_motor[num // 2].write((s + '\n').encode())
+    s = str(num) + ' ' + '2000'
+    ser_motor.write((s + '\n').encode())
 
 def release_big(num):
-    s = str(num % 2) + ' ' + '3000'
-    ser_motor[num // 2].write((s + '\n').encode())
+    s = str(num) + ' ' + '3000'
+    ser_motor.write((s + '\n').encode())
 
 def send_command(cmd):
-    send_num = cmd[0]
-    s = ' '.join(str(i) for i in cmd[1:])
-    ser_motor[send_num].write((s + '\n').encode())
+    s = ' '.join(str(i) for i in cmd)
+    ser_motor.write((s + '\n').encode())
 
 def controller(solution):
     for twist in solution:
@@ -35,7 +34,5 @@ def controller(solution):
                 sleep(0.3)
         #sleep(1)
 
-ser_motor = [None, None]
-ser_motor[0] = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01, write_timeout=0)
-ser_motor[1] = serial.Serial('/dev/ttyUSB1', 115200, timeout=0.01, write_timeout=0)
+ser_motor = serial.Serial('/dev/tty.usbserial', 115200, timeout=0.01, write_timeout=0)
 sleep(2)
