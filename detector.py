@@ -18,7 +18,7 @@ def grab_half(mode):
     grab(mode)
     grab(mode + 2)
 
-def detector():
+def detector(pos_wait):
     for i in range(4):
         grab(i)
     sleep(1)
@@ -38,10 +38,14 @@ def detector():
             cv2.rectangle(frame, start, end, (0,255,0), 3) 
             cv2.circle(frame, (int(width/2), int(height/2)), int(length/3/3/2), (0, 0, 0))
             cv2.imshow('frame', frame)
-            #if cv2.waitKey(1):
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                cv2.destroyAllWindows()
-                break
+            if pos_wait:
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    cv2.destroyAllWindows()
+                    break
+            else:
+                if cv2.waitKey(1):
+                    cv2.destroyAllWindows()
+                    break
 
     #color: wgrboy
     #color_low = [[-1 for _ in range(3)] for _ in range(6)]
@@ -70,7 +74,7 @@ def detector():
 
         cv2.imshow('frame', frame)
         while True:
-            if cv2.waitKey(1) & 0xFF != ord('c'):
+            if cv2.waitKey(1000) & 0xFF != ord('c'):
                 cv2.destroyAllWindows()
                 break
 

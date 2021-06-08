@@ -23,8 +23,18 @@ def send_command(cmd):
     s = ' '.join(str(i) for i in cmd)
     ser_motor.write((s + '\n').encode())
 
+Status = 0
+def set_status(st):
+    global Status
+    Status = st
+
 def controller(solution):
+    global Status
     for twist in solution:
+        print('satus:{0}'.format(Status))
+        if Status == 0:
+            break
+
         for i in range(4):
             grab(i)
         sleep(0.1)
@@ -42,5 +52,5 @@ def controller(solution):
         #     chon(i)
         #sleep(1)
 
-ser_motor = serial.Serial('/dev/tty.usbserial', 115200, timeout=0.01, write_timeout=0)
+ser_motor = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01, write_timeout=0)
 sleep(2)
