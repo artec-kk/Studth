@@ -18,7 +18,15 @@ def grab_half(mode):
     grab(mode)
     grab(mode + 2)
 
+
+CloseFlg = False
+def mouse_event(event, x, y, flags, param):
+    global CloseFlg
+    if event == cv2.EVENT_LBUTTONUP:
+        CloseFlg = True
+
 def detector(pos_wait):
+    global CloseFlg
     for i in range(4):
         grab(i)
     sleep(1)
@@ -31,15 +39,22 @@ def detector(pos_wait):
     start = (int((width - length) / 2), int((height - length) / 2)) # (x, y)
     end = (start[0] + length, start[1] + length)
 
+    ret, frame = capture.read()
+    cv2.imshow('Click the image to go', frame)
+    cv2.waitKey(1)
+    cv2.setMouseCallback('Click the image to go', mouse_event)
+
     while True:
         ret, frame = capture.read()
         if ret:
             #frame = cv2.resize(frame, dsize=(size_x, size_y))
             cv2.rectangle(frame, start, end, (0,255,0), 3) 
             cv2.circle(frame, (int(width/2), int(height/2)), int(length/3/3/2), (0, 0, 0))
-            cv2.imshow('frame', frame)
+            cv2.imshow('Click the image to go', frame)
             if pos_wait:
-                if cv2.waitKey(1) & 0xFF == ord('q'):
+                cv2.waitKey(10)
+                if CloseFlg:
+                    CloseFlg = False
                     cv2.destroyAllWindows()
                     break
             else:
