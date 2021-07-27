@@ -87,11 +87,11 @@ def detector(pos_wait):
         for dr in range(9):
             cv2.circle(frame, (center[0] + dx[dr] * d, center[1] + dy[dr] * d), 2, (0, 0, 0), 2)
 
-        cv2.imshow('frame', frame)
-        while True:
-            if cv2.waitKey(1000) & 0xFF != ord('c'):
-                cv2.destroyAllWindows()
-                break
+        # cv2.imshow('frame', frame)
+        # while True:
+        #     if cv2.waitKey(1000) & 0xFF != ord('c'):
+        #         cv2.destroyAllWindows()
+        #         break
 
         for val_coord_idx in val_coord_idxes[0]:
             val_idx = idx * 9 + val_coord_idx
@@ -161,7 +161,7 @@ def detector(pos_wait):
             s_min = vals[center_stickers[color]][1]
     res = [-1 for _ in range(54)]
     for i in range(54):
-        if vals[i][1] < 75:
+        if vals[i][1] < 30:
             res[i] = white_idx
             continue
         min_error = 10000000
