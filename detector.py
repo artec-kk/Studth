@@ -18,11 +18,50 @@ def grab_half(mode):
     grab(mode)
     grab(mode + 2)
 
-def detector():
+
+CloseFlg = False
+def mouse_event(event, x, y, flags, param):
+    global CloseFlg
+    if event == cv2.EVENT_LBUTTONUP:
+        CloseFlg = True
+
+def detector(pos_wait):
+    global CloseFlg
     for i in range(4):
         grab(i)
     sleep(1)
     capture = cv2.VideoCapture(0)
+
+    width = capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+    height = capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+    length = int(height / 2)
+    start = (int((width - length) / 2), int((height - length) / 2)) # (x, y)
+    end = (start[0] + length, start[1] + length)
+
+    ret, frame = capture.read()
+    cv2.imshow('Click the image to go', frame)
+    cv2.waitKey(1)
+    cv2.setMouseCallback('Click the image to go', mouse_event)
+
+    while True:
+        ret, frame = capture.read()
+        if ret:
+            #frame = cv2.resize(frame, dsize=(size_x, size_y))
+            cv2.rectangle(frame, start, end, (0,255,0), 3) 
+            cv2.circle(frame, (int(width/2), int(height/2)), int(length/3/3/2), (0, 0, 0))
+            cv2.imshow('Click the image to go', frame)
+            if pos_wait:
+                cv2.waitKey(10)
+                if CloseFlg:
+                    CloseFlg = False
+                    cv2.destroyAllWindows()
+                    break
+            else:
+                if cv2.waitKey(1):
+                    cv2.destroyAllWindows()
+                    break
+
     #color: wgrboy
     #color_low = [[-1 for _ in range(3)] for _ in range(6)]
     #color_hgh = [[-1 for _ in range(3)] for _ in range(6)]
@@ -40,16 +79,20 @@ def detector():
         frames = []
         for _ in range(5):
             ret, frame = capture.read()
-        for _ in range(8):
-            frame = cv2.resize(frame, (size_x, size_y))
-            frames.append(frame)
-        n_frames = []
-        while len(frames) > 1:
-            for i in range(0, len(frames), 2):
-                n_frames.append(cv2.addWeighted(frames[i], 0.5, frames[i + 1], 0.5, 0))
-            frames = deepcopy(n_frames)
-            n_frames = []
-        hsv = cv2.cvtColor(frames[0],cv2.COLOR_BGR2HSV)
+
+        frame = frame[start[1]:end[1], start[0]:end[0]] #im[top : bottom, left : right]
+        frame = cv2.resize(frame, (size_x, size_y))
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+        for dr in range(9):
+            cv2.circle(frame, (center[0] + dx[dr] * d, center[1] + dy[dr] * d), 2, (0, 0, 0), 2)
+
+        # cv2.imshow('frame', frame)
+        # while True:
+        #     if cv2.waitKey(1000) & 0xFF != ord('c'):
+        #         cv2.destroyAllWindows()
+        #         break
+
         for val_coord_idx in val_coord_idxes[0]:
             val_idx = idx * 9 + val_coord_idx
             coord_idx = val_coord_idx
@@ -68,12 +111,7 @@ def detector():
                 if i == 0 and vals[val_idx][i] < 0:
                     vals[val_idx][i] += 180
         
-        if idx == 0:
-            for dr in range(9):
-                cv2.circle(frame, (center[0] + dx[dr] * d, center[1] + dy[dr] * d), 2, (0, 0, 0), 2)
-            cv2.imshow('frame', frame)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+        # if idx == 0:
         
         grab_half(0)
         sleep(0.25)
@@ -81,7 +119,8 @@ def detector():
         sleep(0.2)
         for _ in range(5):
             ret, frame = capture.read()
-        frame = cv2.resize(frame, (size_x, size_y))
+        frame = frame[start[1]:end[1], start[0]:end[0]] #im[top : bottom, left : right]
+        frame = cv2.resize(frame, dsize=(size_x, size_y))
         hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
         for val_coord_idx in val_coord_idxes[1]:
             val_idx = idx * 9 + val_coord_idx
@@ -122,7 +161,7 @@ def detector():
             s_min = vals[center_stickers[color]][1]
     res = [-1 for _ in range(54)]
     for i in range(54):
-        if vals[i][1] < 75:
+        if vals[i][1] < 30:
             res[i] = white_idx
             continue
         min_error = 10000000
@@ -137,8 +176,8 @@ def detector():
                 res[i] = color
     return res
 
-d = 40
-size_x = 130
+d = 30
+size_x = 100
 size_y = 100
 center = [size_x // 2, size_y // 2]
 dx = (-1, 0, 1, -1, 0, 1, -1, 0, 1)
