@@ -3,6 +3,8 @@ from basic_functions import *
 import serial
 from time import time, sleep
 
+Status = 0
+
 def grab(num):
     s = str(num) + ' ' + '1000'
     ser_motor.write((s + '\n').encode())
@@ -23,7 +25,6 @@ def send_command(cmd):
     s = ' '.join(str(i) for i in cmd)
     ser_motor.write((s + '\n').encode())
 
-Status = 0
 def set_status(st):
     global Status
     Status = st
